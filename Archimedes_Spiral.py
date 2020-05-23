@@ -1,3 +1,4 @@
+# encoding:utf-8
 import math 
 import cv2
 import numpy as np
@@ -190,24 +191,26 @@ def DrawPoints(pt1,pt2, color):
     img[pt2[1], pt2[0]] = color
     
 #https://zh.wikipedia.org/wiki/阿基米德螺线
-def Archimedes_Spiral():
+def Archimedes_Spiral(center_x, center_y, rad, angle_s):
     center_pt = np.zeros((2), dtype=np.int32)
-    center_pt[0] = 500
-    center_pt[1] = 500
+    center_pt[0] = center_x
+    center_pt[1] = center_y
     
-    speed_val = 1
-    angle_step = 10
+    speed_val = rad
+    angle_step = angle_s
     
-    red_color = np.zeros((3), dtype=np.int16)
+    red_color = np.zeros((3), dtype=np.int32)
     red_color[2] = 255       
     
     pt1 = np.zeros((2), dtype=np.int32)
     pt2 = np.zeros((2), dtype=np.int32)    
     
-    pt1 = center_pt
+    #pt1[0] = center_pt[0]
+    #pt1[0] = center_pt[0]
+
     
     # 10 loops
-    for i in range(360):
+    for i in range(36000):
         cur_angle  = i * angle_step
         cur_radius = i * speed_val
         
@@ -216,7 +219,7 @@ def Archimedes_Spiral():
         yy2 = math.sin(math.radians(cur_angle+angle_step))
         xx2 = math.cos(math.radians(cur_angle+angle_step))
         
-        #print(xx, yy)
+        #print(xx1, yy1,xx2,yy2,cur_radius)
         #print(pt1,pt2)
         pt1[0] = int(cur_radius * xx1 + 0.5001) + center_pt[0]
         pt1[1] = int(cur_radius * yy1 + 0.5001) + center_pt[1]
@@ -228,7 +231,7 @@ def Archimedes_Spiral():
         red_color[1] = 0
         red_color[2] = 255
         
-        print(pt1,pt2)
+        #print(pt1,pt2,center_pt)
         
         if(pt2[0] <= 0 or pt2[0] >= 1920 or pt2[1] <=0 or pt2[1] >= 1080):
             break
@@ -250,7 +253,11 @@ for y in range(1080):
 
     
 
-Archimedes_Spiral()
+Archimedes_Spiral(500,500, 0.3,1)
+Archimedes_Spiral(1200,500, 0.2,1)
 
-cv2.imwrite('Archimedes_Spiral.jpg', img)
+
 cv2.imshow('image',img)
+cv2.imwrite('Archimedes_Spiral.jpg', img)
+
+
