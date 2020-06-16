@@ -30,39 +30,50 @@ def SampleGrain(h, w, c, noiseImg, grainSizeX, grainSizeY):
     x_off = np.random.randint(0, max_x_off)
     y_off = np.random.randint(0, max_y_off)
     
-    for i in range(h):
-        for j in range(w):
-            #Bilear 
+    for j in range(h):
+        for i in range(w):
+            #Bilinear 
            
-            pos_x = x_off + j/grainSizeX
-            pos_y = y_off + i/grainSizeY
+            pos_x = x_off + i/grainSizeX
+            pos_y = y_off + j/grainSizeY
             
-            h_coff = math.modf(pos_x)[0]
-            v_coff = math.modf(pos_y)[0]
+            h_coff = 1- math.modf(pos_x)[0]
+            v_coff = 1 -math.modf(pos_y)[0]
             
             x0 = int(pos_x)
             x1 = x0 + 1
             y0 = int(pos_y)
             y1 = y0 +1 
-            
-            out[i,j] = (noiseImg[x0,y0] * h_coff + (1-h_coff) * noiseImg[x1,y0]) * v_coff + (1-v_coff)*(noiseImg[x0,y1] * h_coff + (1-h_coff) * noiseImg[x1,y1])
+
+            out[j,i] = (noiseImg[y0,x0] * h_coff + (1-h_coff) * noiseImg[y0,x1]) * v_coff + (1-v_coff)*(noiseImg[y1,x0] * h_coff + (1-h_coff) * noiseImg[y1,x1])
     return out
 
+
+    
 def FilmGrain(srcImg, noiseImg, grainSizeX, grainSizeY):
     h = srcImg.shape[0]
     w = srcImg.shape[1]
     
     #Sample 
     noises = SampleGrain(srcImg.shape[0],srcImg.shape[1], srcImg.shape[2], noiseImg, grainSizeX, grainSizeY)
-    return (noises + srcImg)
-
+    cv2.imwrite("noise2.jpg", noises*255)
+    return (noises  + srcImg)
     
-noise_img = gasuss_noise_rgb(1024,1024,3)
-cv2.imwrite("noise.png", noise_img* 255)
 
-srcImg = cv2.imread("test.jpg").astype(float)/255.0
 
-filmgrain =FilmGrain(srcImg, noise_img, 32, 512)
+def Test1():
+    noise_img = abs(gasuss_noise_rgb(1024,1024,3))
+    cv2.imwrite("noise.png", noise_img* 255)
 
-cv2.imwrite("FilmGrain.jpg", filmgrain*255)
+    srcImg = cv2.imread("test.jpg").astype(float)/255.0
+
+    filmgrain =FilmGrain(srcImg, noise_img, 512, 512)
+    
+    cv2.imwrite("FilmGrain1.jpg", filmgrain*255)
+
+
+Test1()
+
+
+# http://codex.wordpress.org.cn/Film_Grain%EF%BC%88%E8%83%B6%E7%89%87%E9%A2%97%E7%B2%92%EF%BC%89
 
