@@ -67,12 +67,40 @@ def Test1():
 
     srcImg = cv2.imread("test.jpg").astype(float)/255.0
 
-    filmgrain =FilmGrain(srcImg, noise_img, 512, 512)
+    filmgrain =FilmGrain(srcImg, noise_img, 4, 4)
     
     cv2.imwrite("FilmGrain1.jpg", filmgrain*255)
+    
+    filmgrain =FilmGrain(srcImg, noise_img, 4, 1024)
+
+    cv2.imwrite("FilmGrain2.jpg", filmgrain*255)
 
 
-Test1()
+#Test1()
+
+def Test2():
+    noise_img = abs(gasuss_noise_rgb(1024,1024,3))
+    cv2.imwrite("noise.png", noise_img* 255)
+
+    srcImg = cv2.imread("test.jpg").astype(float)/255.0
+    
+    #min_v = np.min(srcImg,(0,1))
+    #max_v = np.max(srcImg,(0,1))
+    
+    #亮度-70
+    #对比度减去5
+    
+    srcImg = abs( srcImg * .95   - 70.0/255)
+
+    filmgrain =FilmGrain(srcImg, noise_img, 2, 2)
+    
+    cv2.imwrite("FilmGrain1.jpg", filmgrain*255)
+    
+    filmgrain =FilmGrain(srcImg, noise_img, 4, 1024)
+
+    cv2.imwrite("FilmGrain2.jpg", filmgrain*255)
+
+Test2()
 
 
 # http://codex.wordpress.org.cn/Film_Grain%EF%BC%88%E8%83%B6%E7%89%87%E9%A2%97%E7%B2%92%EF%BC%89
